@@ -15,7 +15,7 @@ import Badge from '@mui/material/Badge'
 import Tooltip from '@mui/material/Tooltip'
 import HelpOutlineIcon from '@mui/icons-material/HelpOutline'
 import Profiles from './Menus/profiles'
-import IconButton from '@mui/material/IconButton';
+
 
 function AppBar() {
   return (
@@ -43,12 +43,12 @@ function AppBar() {
         <ModeSelect />
         <Tooltip title="Notification">
           <Badge color="secondary" variant="dot" sx ={{ cursor: 'pointer'}}>
-            <NotificationsIcon />
+            <NotificationsIcon sx={{ color: 'primary.main' }} />
           </Badge>
         </Tooltip>
         <Tooltip title="Help">
           <Badge color="secondary" variant="dot" sx ={{ cursor: 'pointer'}}>
-            <HelpOutlineIcon />
+            <HelpOutlineIcon sx={{ color: 'primary.main' }}/>
           </Badge>
         </Tooltip>
         <Profiles />
