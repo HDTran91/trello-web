@@ -32,7 +32,7 @@ function Profiles() {
           aria-expanded={open ? 'true' : undefined}
         >
           <Avatar
-            sx={{ width: 32, height: 32 }}
+            sx={{ width: 34, height: 34 }}
             alt="Gacondev"
             src= 'https://naipet.com/wp-content/uploads/2016/03/nuoi-duong-va-cham-soc-ga-con-giai-doan-0-4-tuan-tuoi.jpg'
           />
