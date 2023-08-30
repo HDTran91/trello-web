@@ -1,15 +1,496 @@
 import Box from '@mui/material/Box'
+import Typography from '@mui/material/Typography'
+import React from 'react'
+import Button from '@mui/material/Button'
+import Menu from '@mui/material/Menu'
+import MenuItem from '@mui/material/MenuItem'
+import Divider from '@mui/material/Divider'
+import ListItemText from '@mui/material/ListItemText'
+import ListItemIcon from '@mui/material/ListItemIcon'
+import ContentCut from '@mui/icons-material/ContentCut'
+import ContentCopy from '@mui/icons-material/ContentCopy'
+import ContentPaste from '@mui/icons-material/ContentPaste'
+import Cloud from '@mui/icons-material/Cloud'
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
+import Tooltip from '@mui/material/Tooltip'
+import DeleteForeverIcon from '@mui/icons-material/DeleteForever'
+import AddCardIcon from '@mui/icons-material/AddCard'
+import DragHandleIcon from '@mui/icons-material/DragHandle'
+import Card from '@mui/material/Card'
+import CardContent from '@mui/material/CardContent'
+import CardMedia from '@mui/material/CardMedia'
+import { CardActions } from '@mui/material'
+import GroupIcon from '@mui/icons-material/Group'
+import CommentIcon from '@mui/icons-material/ModeComment'
+import AttachmentIcon from '@mui/icons-material/Attachment';
+
+const COLUMN_HEADER_HEIGHT = '50px'
+const COLUMN_FOOTER_HEIGHT = '56px'
+
 
 function BoardContent() {
+  const [anchorEl, setAnchorEl] = React.useState(null)
+  const open = Boolean(anchorEl)
+  const handleClick = (event) => {
+    setAnchorEl(event.currentTarget)
+  }
+  const handleClose = () => {
+    setAnchorEl(null)
+  }
   return (
     <Box sx = {{
       bgcolor: (theme) => (theme.palette.mode === 'dark' ? '#34495e': '#1976d2'),
       width: '100%',
-      height: (theme) => `calc(100vh - ${theme.trello.appBarHeight} - ${theme.trello.boardBarHeight})`,
-      display: 'flex',
-      alignItems: 'center'
+      height: (theme) => theme.trello.boardContentHeight,
+
     }}>
-      Board Content
+      <Box sx= {{
+        bgcolor: 'inherit',
+        width: '100%',
+        height: '100%',
+        display: 'flex',
+        overflowX: 'auto',
+        overflowY: 'hidden',
+        '&::-webkit-scrollbar-track': {m: 2}
+      }}>
+        {/* Box Column1 */}
+        <Box
+          sx ={{
+            minWidth: '300px',
+            maxWidth: '300px',
+            bgcolor: (theme) => (theme.palette.mode === 'dark' ? '#333643': '#ebecf0'),
+            ml: 2,
+            borderRadius: '6px',
+            height: 'fit-content',
+            maxHeight: (theme) => `calc(${theme.trello.boardContentHeight} - ${theme.spacing(5)})`
+          }}>
+          <Box sx = {{
+            height: COLUMN_HEADER_HEIGHT,
+            p: 2,
+            display: 'flex',
+            alightItems: 'center',
+            justifyContent: 'space-between'
+          }}>
+            <Typography variant='h6' sx= {{
+              fontSize: '1rem',
+              fontWeight: 'bold',
+              cursor: 'pointer'
+            }}>
+              Column Title
+            </Typography>
+            <Box>
+              <Tooltip title="More Option">
+                <ExpandMoreIcon 
+                  sx ={{ color: 'text.primary', cursor: 'pointer'}}
+                  id="basic-column-dropdown"
+                  aria-controls={open ? 'basic-menu-column-dropdown' : undefined}
+                  aria-haspopup="true"
+                  aria-expanded={open ? 'true' : undefined}
+                  onClick={handleClick}
+                />
+              </Tooltip>
+              <Menu
+                id="basic-menu-column-dropdown"
+                anchorEl={anchorEl}
+                open={open}
+                onClose={handleClose}
+                MenuListProps={{
+                  'aria-labelledby': 'basic-column-dropdown'
+                }}
+              >
+                <MenuItem>
+                  <ListItemIcon><AddCardIcon fontSize="small" />
+                  </ListItemIcon><ListItemText>Add new card</ListItemText>
+                </MenuItem>
+                <MenuItem>
+                  <ListItemIcon><ContentCut fontSize="small" />
+                  </ListItemIcon><ListItemText>cut</ListItemText>
+                </MenuItem>
+                <MenuItem>
+                  <ListItemIcon><ContentCopy fontSize="small" />
+                  </ListItemIcon><ListItemText>Copy</ListItemText>
+                </MenuItem>
+                <MenuItem>
+                  <ListItemIcon><ContentPaste fontSize="small" />
+                  </ListItemIcon><ListItemText>paste</ListItemText>
+                </MenuItem>
+                <Divider />
+                <MenuItem>
+                  <ListItemIcon> <DeleteForeverIcon fontSize="small" /></ListItemIcon>
+                  <ListItemText>Remove this Column</ListItemText>
+                </MenuItem>
+                <MenuItem>
+                  <ListItemIcon> <Cloud fontSize="small" /></ListItemIcon>
+                  <ListItemText>Archive this column</ListItemText>
+                </MenuItem>
+              </Menu>
+            </Box>
+          </Box>
+          <Box sx ={{
+            p: '0 5px',
+            m: '0 5px',
+            display: 'flex',
+            flexDirection: 'column',
+            gap: 1,
+            overflowX: 'hidden',
+            overflowY: 'auto',
+            maxHeight: (theme) => `calc(
+              ${theme.trello.boardContentHeight} -
+              ${theme.spacing(5)} -
+              ${COLUMN_HEADER_HEIGHT} -
+              ${COLUMN_FOOTER_HEIGHT})
+              `,
+            '&::-webkit-scrollbar-thumb': {backgroundColor: '#ced0da'},
+            '&::-webkit-scrollbar-thumb:hover': {backgroundColor: '#bfc2cf'}
+          }}>
+            <Card sx={{
+              cursor: 'pointer',
+              boxShadow: '0 1px 1px rgba(0,0,0.2)',
+              overflow: 'unset'
+            }}>
+
+              <CardMedia
+                sx= {{ height: 140 }}
+                image="data:image/jpeg;base64,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"
+                alt="green iguana"
+              />
+              <CardContent sx ={{ p:1.5, '&:last-child': { p: 1.5 }}}>
+                <Typography>
+                  Gacondev MERN STACK
+                </Typography>
+              </CardContent>
+              <CardActions sx ={{ p: '0 4px 8px 4px' }}>
+                <Button size="small" startIcon = {<GroupIcon />}>20</Button>
+                <Button size="small" startIcon = {<CommentIcon />}>15</Button>
+                <Button size="small" startIcon = {<AttachmentIcon />}>10</Button>
+              </CardActions>
+            </Card>
+            <Card sx={{
+              cursor: 'pointer',
+              boxShadow: '0 1px 1px rgba(0,0,0.2)',
+              overflow: 'unset'
+
+            }}>
+              <CardContent sx ={{ p:1.5, '&:last-child': { p: 1.5 }}}>
+                <Typography>
+                  Card 01
+                </Typography>
+              </CardContent>
+            </Card>
+            <Card sx={{
+              cursor: 'pointer',
+              boxShadow: '0 1px 1px rgba(0,0,0.2)',
+              overflow: 'unset'
+
+            }}>
+              <CardContent sx ={{ p:1.5, '&:last-child': { p: 1.5 }}}>
+                <Typography>
+                  Card 01
+                </Typography>
+              </CardContent>
+            </Card>
+            <Card sx={{
+              cursor: 'pointer',
+              boxShadow: '0 1px 1px rgba(0,0,0.2)',
+              overflow: 'unset'
+
+            }}>
+              <CardContent sx ={{ p:1.5, '&:last-child': { p: 1.5 }}}>
+                <Typography>
+                  Card 01
+                </Typography>
+              </CardContent>
+            </Card>
+            <Card sx={{
+              cursor: 'pointer',
+              boxShadow: '0 1px 1px rgba(0,0,0.2)',
+              overflow: 'unset'
+
+            }}>
+              <CardContent sx ={{ p:1.5, '&:last-child': { p: 1.5 }}}>
+                <Typography>
+                  Card 01
+                </Typography>
+              </CardContent>
+            </Card>
+            <Card sx={{
+              cursor: 'pointer',
+              boxShadow: '0 1px 1px rgba(0,0,0.2)',
+              overflow: 'unset'
+
+            }}>
+              <CardContent sx ={{ p:1.5, '&:last-child': { p: 1.5 }}}>
+                <Typography>
+                  Card 01
+                </Typography>
+              </CardContent>
+            </Card>
+            <Card sx={{
+              cursor: 'pointer',
+              boxShadow: '0 1px 1px rgba(0,0,0.2)',
+              overflow: 'unset'
+
+            }}>
+              <CardContent sx ={{ p:1.5, '&:last-child': { p: 1.5 }}}>
+                <Typography>
+                  Card 01
+                </Typography>
+              </CardContent>
+            </Card>
+            <Card sx={{
+              cursor: 'pointer',
+              boxShadow: '0 1px 1px rgba(0,0,0.2)',
+              overflow: 'unset'
+
+            }}>
+              <CardContent sx ={{ p:1.5, '&:last-child': { p: 1.5 }}}>
+                <Typography>
+                  Card 01
+                </Typography>
+              </CardContent>
+            </Card>
+            <Card sx={{
+              cursor: 'pointer',
+              boxShadow: '0 1px 1px rgba(0,0,0.2)',
+              overflow: 'unset'
+
+            }}>
+              <CardContent sx ={{ p:1.5, '&:last-child': { p: 1.5 }}}>
+                <Typography>
+                  Card 01
+                </Typography>
+              </CardContent>
+            </Card>
+            <Card sx={{
+              cursor: 'pointer',
+              boxShadow: '0 1px 1px rgba(0,0,0.2)',
+              overflow: 'unset'
+
+            }}>
+              <CardContent sx ={{ p:1.5, '&:last-child': { p: 1.5 }}}>
+                <Typography>
+                  Card 01
+                </Typography>
+              </CardContent>
+            </Card>
+            <Card sx={{
+              cursor: 'pointer',
+              boxShadow: '0 1px 1px rgba(0,0,0.2)',
+              overflow: 'unset'
+
+            }}>
+              <CardContent sx ={{ p:1.5, '&:last-child': { p: 1.5 }}}>
+                <Typography>
+                  Card 01
+                </Typography>
+              </CardContent>
+            </Card>
+            <Card sx={{
+              cursor: 'pointer',
+              boxShadow: '0 1px 1px rgba(0,0,0.2)',
+              overflow: 'unset'
+
+            }}>
+              <CardContent sx ={{ p:1.5, '&:last-child': { p: 1.5 }}}>
+                <Typography>
+                  Card 01
+                </Typography>
+              </CardContent>
+            </Card>
+            <Card sx={{
+              cursor: 'pointer',
+              boxShadow: '0 1px 1px rgba(0,0,0.2)',
+              overflow: 'unset'
+
+            }}>
+              <CardContent sx ={{ p:1.5, '&:last-child': { p: 1.5 }}}>
+                <Typography>
+                  Card 01
+                </Typography>
+              </CardContent>
+            </Card>
+            <Card sx={{
+              cursor: 'pointer',
+              boxShadow: '0 1px 1px rgba(0,0,0.2)',
+              overflow: 'unset'
+
+            }}>
+              <CardContent sx ={{ p:1.5, '&:last-child': { p: 1.5 }}}>
+                <Typography>
+                  Card 01
+                </Typography>
+              </CardContent>
+            </Card>
+            <Card sx={{
+              cursor: 'pointer',
+              boxShadow: '0 1px 1px rgba(0,0,0.2)',
+              overflow: 'unset'
+
+            }}>
+              <CardContent sx ={{ p:1.5, '&:last-child': { p: 1.5 }}}>
+                <Typography>
+                  Card 01
+                </Typography>
+              </CardContent>
+            </Card>
+            {/* Add new Card*/}
+          </Box>
+          <Box sx ={{
+            height: COLUMN_FOOTER_HEIGHT,
+            p: 2,
+            display: 'flex',
+            alightItems: 'center',
+            justifyContent: 'space-between'
+          }}>
+            <Button startIcon={<AddCardIcon />}>Add new card</Button>
+            <Tooltip title="Drag to move">
+              <DragHandleIcon sx= {{ cursor: 'pointer' }} />
+            </Tooltip>
+          </Box>
+
+        </Box>
+        {/* Box Column2 */}
+        <Box
+          sx ={{
+            minWidth: '300px',
+            maxWidth: '300px',
+            bgcolor: (theme) => (theme.palette.mode === 'dark' ? '#333643': '#ebecf0'),
+            ml: 2,
+            borderRadius: '6px',
+            height: 'fit-content',
+            maxHeight: (theme) => `calc(${theme.trello.boardContentHeight} - ${theme.spacing(5)})`
+          }}>
+          <Box sx = {{
+            height: COLUMN_HEADER_HEIGHT,
+            p: 2,
+            display: 'flex',
+            alightItems: 'center',
+            justifyContent: 'space-between'
+          }}>
+            <Typography variant='h6' sx= {{
+              fontSize: '1rem',
+              fontWeight: 'bold',
+              cursor: 'pointer'
+            }}>
+              Column Title
+            </Typography>
+            <Box>
+              <Tooltip title="More Option">
+                <ExpandMoreIcon 
+                  sx ={{ color: 'text.primary', cursor: 'pointer'}}
+                  id="basic-column-dropdown"
+                  aria-controls={open ? 'basic-menu-column-dropdown' : undefined}
+                  aria-haspopup="true"
+                  aria-expanded={open ? 'true' : undefined}
+                  onClick={handleClick}
+                />
+              </Tooltip>
+              <Menu
+                id="basic-menu-column-dropdown"
+                anchorEl={anchorEl}
+                open={open}
+                onClose={handleClose}
+                MenuListProps={{
+                  'aria-labelledby': 'basic-column-dropdown'
+                }}
+              >
+                <MenuItem>
+                  <ListItemIcon><AddCardIcon fontSize="small" />
+                  </ListItemIcon><ListItemText>Add new card</ListItemText>
+                </MenuItem>
+                <MenuItem>
+                  <ListItemIcon><ContentCut fontSize="small" />
+                  </ListItemIcon><ListItemText>cut</ListItemText>
+                </MenuItem>
+                <MenuItem>
+                  <ListItemIcon><ContentCopy fontSize="small" />
+                  </ListItemIcon><ListItemText>Copy</ListItemText>
+                </MenuItem>
+                <MenuItem>
+                  <ListItemIcon><ContentPaste fontSize="small" />
+                  </ListItemIcon><ListItemText>paste</ListItemText>
+                </MenuItem>
+                <Divider />
+                <MenuItem>
+                  <ListItemIcon> <DeleteForeverIcon fontSize="small" /></ListItemIcon>
+                  <ListItemText>Remove this Column</ListItemText>
+                </MenuItem>
+                <MenuItem>
+                  <ListItemIcon> <Cloud fontSize="small" /></ListItemIcon>
+                  <ListItemText>Archive this column</ListItemText>
+                </MenuItem>
+              </Menu>
+            </Box>
+          </Box>
+          <Box sx ={{
+            p: '0 5px',
+            m: '0 5px',
+            display: 'flex',
+            flexDirection: 'column',
+            gap: 1,
+            overflowX: 'hidden',
+            overflowY: 'auto',
+            maxHeight: (theme) => `calc(
+              ${theme.trello.boardContentHeight} -
+              ${theme.spacing(5)} -
+              ${COLUMN_HEADER_HEIGHT} -
+              ${COLUMN_FOOTER_HEIGHT})
+              `,
+            '&::-webkit-scrollbar-thumb': {backgroundColor: '#ced0da'},
+            '&::-webkit-scrollbar-thumb:hover': {backgroundColor: '#bfc2cf'}
+          }}>
+            <Card sx={{
+              cursor: 'pointer',
+              boxShadow: '0 1px 1px rgba(0,0,0.2)',
+              overflow: 'unset'
+            }}>
+
+              <CardMedia
+                sx= {{ height: 140 }}
+                image="data:image/jpeg;base64,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"
+                alt="green iguana"
+              />
+              <CardContent sx ={{ p:1.5, '&:last-child': { p: 1.5 }}}>
+                <Typography>
+                  Gacondev MERN STACK
+                </Typography>
+              </CardContent>
+              <CardActions sx ={{ p: '0 4px 8px 4px' }}>
+                <Button size="small" startIcon = {<GroupIcon />}>20</Button>
+                <Button size="small" startIcon = {<CommentIcon />}>15</Button>
+                <Button size="small" startIcon = {<AttachmentIcon />}>10</Button>
+              </CardActions>
+            </Card>
+            <Card sx={{
+              cursor: 'pointer',
+              boxShadow: '0 1px 1px rgba(0,0,0.2)',
+              overflow: 'unset'
+
+            }}>
+              <CardContent sx ={{ p:1.5, '&:last-child': { p: 1.5 }}}>
+                <Typography>
+                  Card 01
+                </Typography>
+              </CardContent>
+            </Card>
+            {/* Add new Card*/}
+          </Box>
+          <Box sx ={{
+            height: COLUMN_FOOTER_HEIGHT,
+            p: 2,
+            display: 'flex',
+            alightItems: 'center',
+            justifyContent: 'space-between'
+          }}>
+            <Button startIcon={<AddCardIcon />}>Add new card</Button>
+            <Tooltip title="Drag to move">
+              <DragHandleIcon sx= {{ cursor: 'pointer' }} />
+            </Tooltip>
+          </Box>
+
+        </Box>
+      </Box>
+
     </Box>
   )
 }
