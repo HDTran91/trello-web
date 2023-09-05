@@ -5,7 +5,7 @@ const COLUMN_HEADER_HEIGHT = '50px'
 const COLUMN_FOOTER_HEIGHT = '56px'
 
 
-function ListCards() {
+function ListCards({ cards }) {
   return (
     <Box sx ={{
       p: '0 5px',
@@ -21,16 +21,12 @@ function ListCards() {
         ${COLUMN_HEADER_HEIGHT} -
         ${COLUMN_FOOTER_HEIGHT})
         `,
-      '&::-webkit-scrollbar-thumb': {backgroundColor: '#ced0da'},
+      '&::-webkit-scrollbar-thumb': { backgroundColor: '#ced0da' },
       '&::-webkit-scrollbar-thumb:hover': { backgroundColor: '#bfc2cf' }
     }}>
+
+      {cards?.map(card => <Card key = {card._id} card ={card} />)}
       <Card />
-      <Card temporaryHideMedia/>
-      <Card temporaryHideMedia/>
-      <Card temporaryHideMedia/>
-      <Card temporaryHideMedia/>
-      <Card temporaryHideMedia/>
-      <Card temporaryHideMedia/>
     </Box>
   )
 }
