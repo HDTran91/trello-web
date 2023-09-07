@@ -24,6 +24,7 @@ function Card({ card }) {
     opacity: isDragging ? 0.5: undefined
   }
 
+
   const shouldShowCardAction = () => {
     card?.memberIds?.length || card?.comments?.length || card?.attachments?.length
   }
