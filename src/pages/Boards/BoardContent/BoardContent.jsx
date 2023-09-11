@@ -46,6 +46,61 @@ function BoardContent({ board }) {
     return orderedColumns.find(column => column?.cards?.map(card => card._id)?.includes(cardId))
   }
 
+  // function reupdate state different column
+  const moveCardBetweenDifferentColumns = (
+    overColumn,
+    overCardId,
+    active,
+    over,
+    activeColumn,
+    activeDraggingCardId,
+    activeDraggingCardData
+
+  ) => {
+    setOrderedColumnsState(prevColumns => {
+      //find index of overcard where active card will drop at
+      const overCardIndex = overColumn?.cards?.findIndex(card => card?._id === overCardId)
+
+      //logic to find cardIndex and it was taken from the libraby dndkit
+      let newCardIndex
+      const isBelowOverItem = active.rect.current.translated &&
+              active.rect.current.translated.top > over.rect.top + over.rect.height
+      const modifier = isBelowOverItem ? 1 : 0
+      newCardIndex = overCardIndex >= 0 ? overCardIndex + modifier : overColumn?.card?.length + 1
+
+      //clone old orderedColumnState into new one and return
+      const nextColumn = cloneDeep(prevColumns)
+      const nextActiveColumn = nextColumn.find(column => column._id === activeColumn._id)
+      const nextOverColumn = nextColumn.find(column => column._id === overColumn._id)
+
+      if (nextActiveColumn) {
+        // delete card in column active
+        nextActiveColumn.cards = nextActiveColumn.cards.filter(card => card._id !== activeDraggingCardId)
+        // update card in cardOrderIds
+        nextActiveColumn.cardOrderIds = nextActiveColumn.cards.map(card => card._id)
+      }
+
+      if (nextOverColumn) {
+        // check whether card is dragging exist in overColumn or not if yet delete first
+        nextOverColumn.cards = nextOverColumn.cards.filter(card => card._id !== activeDraggingCardId)
+        // we need to update data ColumnId again after dragging card different column
+        const rebuild_activeDraggingCardData = {
+          ... activeDraggingCardData,
+          columnId: nextOverColumn._id
+        }
+
+        // add card dragged to overColumn
+        nextOverColumn.cards = nextOverColumn.cards.toSpliced(newCardIndex, 0, rebuild_activeDraggingCardData)
+        // update card in cardOrderIds
+        nextOverColumn.cardOrderIds = nextOverColumn.cards.map(card => card._id)
+      }
+
+      // console.log('nextColumn: ', nextColumn)
+
+      return nextColumn
+    })
+  }
+
   //When start to drag
   const handleDragStart = (event) => {
     // console.log('handleDragStart: ', event)
@@ -84,42 +139,14 @@ function BoardContent({ board }) {
     if (!activeColumn || !overColumn) return
 
     if (activeColumn._id !== overColumn._id) {
-      setOrderedColumnsState(prevColumns => {
-        //find index of overcard where active card will drop at
-        const overCardIndex = overColumn?.cards?.findIndex(card => card?._id === overCardId)
-
-        //logic to find cardIndex and it was taken from the libraby dndkit
-        let newCardIndex
-        const isBelowOverItem = active.rect.current.translated &&
-                active.rect.current.translated.top > over.rect.top + over.rect.height
-        const modifier = isBelowOverItem ? 1 : 0
-        newCardIndex = overCardIndex >= 0 ? overCardIndex + modifier : overColumn?.card?.length + 1
-
-        //clone old orderedColumnState into new one and return
-        const nextColumn = cloneDeep(prevColumns)
-        const nextActiveColumn = nextColumn.find(column => column._id === activeColumn._id)
-        const nextOverColumn = nextColumn.find(column => column._id === overColumn._id)
-
-        if (nextActiveColumn) {
-          // delete card in column active
-          nextActiveColumn.cards = nextActiveColumn.cards.filter(card => card._id !== activeDraggingCardId)
-          // update card in cardOrderIds
-          nextActiveColumn.cardOrderIds = nextActiveColumn.cards.map(card => card._id)
-        }
-
-        if (nextOverColumn) {
-          // check whether card is dragging exist in overColumn or not if yet delete first
-          nextOverColumn.cards = nextOverColumn.cards.filter(card => card._id !== activeDraggingCardId)
-          // add card dragged to overColumn
-          nextOverColumn.cards = nextOverColumn.cards.toSpliced(newCardIndex, 0, activeDraggingCardData)
-          // update card in cardOrderIds
-          nextOverColumn.cardOrderIds = nextOverColumn.cards.map(card => card._id)
-        }
-
-        // console.log('nextColumn: ', nextColumn)
-
-        return nextColumn
-      })
+      moveCardBetweenDifferentColumns(
+        overColumn,
+        overCardId,
+        active,
+        over,
+        activeColumn,
+        activeDraggingCardId,
+        activeDraggingCardData)
     }
 
 
@@ -154,7 +181,14 @@ function BoardContent({ board }) {
       // console.log('oldColumnWhenDraggingCard: ', oldColumnWhenDraggingCard)
       // console.log('overColumn: ', overColumn)
       if (oldColumnWhenDraggingCard._id !== overColumn._id) {
-        //hanh dong keo the card giua 2 column khac nhau
+        moveCardBetweenDifferentColumns(
+          overColumn,
+          overCardId,
+          active,
+          over,
+          activeColumn,
+          activeDraggingCardId,
+          activeDraggingCardData)
       }else {
         //hanh dong keo tha cat=rd trong cung mot column'
         //take index from oldColumnWhenDraggingCard
@@ -217,7 +251,7 @@ function BoardContent({ board }) {
   // console.log('activeDragItemData: ', activeDragItemData)
 
   return (
-    <DndContext 
+    <DndContext
       sensors = {sensors}
       // collision
       collisionDetection ={closestCorners}
