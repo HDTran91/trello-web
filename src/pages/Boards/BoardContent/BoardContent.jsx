@@ -6,7 +6,8 @@ import { mapOrder } from '~/utils/sort'
 import { DndContext, PointerSensor, MouseSensor, TouchSensor, useSensor,useSensors, DragOverlay, defaultDropAnimationSideEffects, closestCenter, closestCorners, pointerWithin, rectIntersection, getFirstCollision } from '@dnd-kit/core'
 import { arrayMove } from '@dnd-kit/sortable'
 import { useEffect, useState, useCallback, useRef } from 'react'
-import { cloneDeep, intersection } from 'lodash'
+import { cloneDeep, isEmpty } from 'lodash'
+import { generatePlaceholderCard } from '~/utils/formatter'
 
 const ACTIVE_DRAG_ITEM_TYPE = {
   COLUMN: 'ACTIVE_DRAG_ITEM_TYPE_COLUMN',
@@ -78,6 +79,11 @@ function BoardContent({ board }) {
       if (nextActiveColumn) {
         // delete card in column active
         nextActiveColumn.cards = nextActiveColumn.cards.filter(card => card._id !== activeDraggingCardId)
+        //add placeholder card if column is empty
+        if (isEmpty(nextActiveColumn.cards)) {
+          console.log('Card cuoi cung bi keo di')
+          nextActiveColumn.cards = [generatePlaceholderCard(nextActiveColumn)]
+        }
         // update card in cardOrderIds
         nextActiveColumn.cardOrderIds = nextActiveColumn.cards.map(card => card._id)
       }
@@ -93,11 +99,13 @@ function BoardContent({ board }) {
 
         // add card dragged to overColumn
         nextOverColumn.cards = nextOverColumn.cards.toSpliced(newCardIndex, 0, rebuild_activeDraggingCardData)
+        //delete place holder card if exist
+        nextOverColumn.cards = nextOverColumn.cards.filter(card => !card.PE_PlaceholderCard)
         // update card in cardOrderIds
         nextOverColumn.cardOrderIds = nextOverColumn.cards.map(card => card._id)
       }
 
-      // console.log('nextColumn: ', nextColumn)
+      console.log('nextColumn: ', nextColumn)
 
       return nextColumn
     })
@@ -258,24 +266,26 @@ function BoardContent({ board }) {
     }
     // find the intersecton wiht the mouse
     const pointerIntersections = pointerWithin(args)
-    const intersections = pointerIntersections.length > 0
-      ? pointerIntersections
-      : rectIntersection(args)
-    let overId = getFirstCollision(intersections, 'id')
+    if (!pointerIntersections?.length) return
+    // const intersections = pointerIntersections.length > 0
+    //   ? pointerIntersections
+    //   : rectIntersection(args)
+    //create first overId
+    let overId = getFirstCollision(pointerIntersections, 'id')
     // console.log('overId: ', overId)
     // console.log('intersections: ', intersections)
     if (overId) {
 
       const checkColumn = orderedColumns.find(column => column._id === overId)
       if (checkColumn) {
-        console.log('overId before: ', overId)
-        overId = closestCenter({
+        // console.log('overId before: ', overId)
+        overId = closestCorners({
           ...args,
           droppableContainers: args.droppableContainers.filter(container => {
             return (container.id != overId) && (checkColumn?.cardOrderIds?.includes(container.id))
           })
         })[0]?.id
-        console.log('overId after: ', overId)
+      //   console.log('overId after: ', overId)
       }
 
 
@@ -284,6 +294,7 @@ function BoardContent({ board }) {
     }
     return lastOverId.current ? [{ id: lastOverId.current }] : []
   }, [activeDragItemType])
+
   return (
     <DndContext
       sensors = {sensors}
