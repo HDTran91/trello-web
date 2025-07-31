@@ -105,7 +105,7 @@ function BoardContent({ board }) {
         nextOverColumn.cardOrderIds = nextOverColumn.cards.map(card => card._id)
       }
 
-      console.log('nextColumn: ', nextColumn)
+      // console.log('nextColumn: ', nextColumn)
 
       return nextColumn
     })

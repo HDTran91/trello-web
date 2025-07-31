@@ -4,7 +4,7 @@ import MenuItem from '@mui/material/MenuItem'
 import FormControl from '@mui/material/FormControl'
 import Select from '@mui/material/Select'
 import LightModeIcon from '@mui/icons-material/LightMode'
-import DarkModeOutLinedIcon from '@mui/icons-material/DarkModeOutLined'
+import ModeOutLinedIcon from '@mui/icons-material/DarkModeOutlined'
 import SettingsBrightnessIcon from '@mui/icons-material/SettingsBrightness'
 import Box from '@mui/material/Box'
 
@@ -17,7 +17,7 @@ function ModeSelect() {
 
   return (
     <FormControl size="small">
-      <InputLabel 
+      <InputLabel
         id="label-select-dark-light-mode"
         sx ={{
           color: 'white',
@@ -32,7 +32,7 @@ function ModeSelect() {
         value={mode}
         label="<Mode>"
         onChange={handleChange}
-        sx= {{ 
+        sx= {{
           color: 'white',
           '.MuiOutlinedInput-notchedOutline':{ borderColor: 'white' },
           '&:hover .MuiOutlinedInput-notchedOutline':{ borderColor: 'white' },
@@ -47,7 +47,7 @@ function ModeSelect() {
         </MenuItem>
         <MenuItem value="dark">
           <Box sx ={{ display: 'flex', alighItems: 'center', gap: 1 }}>
-            <DarkModeOutLinedIcon fontSize="small" /> Dark
+            <ModeOutLinedIcon fontSize="small" /> Dark
           </Box>
         </MenuItem>
         <MenuItem value="system">
